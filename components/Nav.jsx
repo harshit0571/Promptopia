@@ -6,16 +6,16 @@ import { useState, useEffect } from "react";
 import { signIn, signOut, useSession, getProviders } from "next-auth/react";
 
 export const Nav = () => {
-  const isUserLoggedIn = true;
+  const { data: session } = useSession();
   const [Providers, setProviders] = useState(null);
   const [toggleDropdown, settoggleDropdown] = useState(false);
 
   useEffect(() => {
-    const setProviders = async () => {
+    const setUpProviders = async () => {
       const response = await getProviders();
       setProviders(response);
     };
-    setProviders();
+    setUpProviders();
   }, []);
   return (
     <nav className="flex-between w-full mb-16 pt-3">
@@ -32,7 +32,7 @@ export const Nav = () => {
 
       {/* {desktop navigation} */}
       <div className="sm:flex hidden">
-        {isUserLoggedIn ? (
+        {session?.user ? (
           <div className="flex gap-3 md:gap-5">
             <Link href="/create-prompt" className="black_btn">
               create post
@@ -43,7 +43,7 @@ export const Nav = () => {
 
             <Link href="/profile">
               <Image
-                src="/assets/images/logo.svg"
+                src={session?.user.image}
                 width={30}
                 height={30}
                 alt="profile"
@@ -53,7 +53,7 @@ export const Nav = () => {
         ) : (
           <>
             {Providers &&
-              Object.values(Providers).map((provider) => {
+              Object.values(Providers).map((provider) => (
                 <button
                   type="button"
                   key={provider.name}
@@ -61,18 +61,19 @@ export const Nav = () => {
                   className="black_btn"
                 >
                   signIn
-                </button>;
-              })}
+                </button>
+              ))}
           </>
         )}
       </div>
       {/* // {mobile navigation} */}
+      {console.log(Providers)}
 
       <div className="sm:hidden flex relative">
-        {isUserLoggedIn ? (
+        {session?.user ? (
           <div className="flex">
             <Image
-              src="/assets/images/logo.svg"
+              src={session?.user.image}
               width={30}
               height={30}
               alt="profile"
@@ -115,7 +116,7 @@ export const Nav = () => {
         ) : (
           <>
             {Providers &&
-              Object.values(Providers).map((provider) => {
+              Object.values(Providers).map((provider) => (
                 <button
                   type="button"
                   key={provider.name}
@@ -123,8 +124,8 @@ export const Nav = () => {
                   className="black_btn"
                 >
                   signIn
-                </button>;
-              })}
+                </button>
+              ))}
           </>
         )}
       </div>
