@@ -5,6 +5,8 @@ import Image from "next/image";
 import { useSession } from "next-auth/react";
 import { usePathname, useRouter } from "next/navigation";
 const PromptCard = ({ post, handleTagClick, handleEdit, handleDelete }) => {
+  const pathName = usePathname();
+  const router = useRouter();
   const [Copy, setCopy] = useState("");
   const handleCopy = () => {
     setCopy(post.prompt);
@@ -13,6 +15,7 @@ const PromptCard = ({ post, handleTagClick, handleEdit, handleDelete }) => {
       setCopy("");
     }, 2000);
   };
+  const { data: season } = useSession();
   return (
     <div className="prompt_card">
       <div className="flex justify-between items-start gap-5">
@@ -55,6 +58,23 @@ const PromptCard = ({ post, handleTagClick, handleEdit, handleDelete }) => {
       >
         {post.tag}
       </p>
+
+      {season?.user.id === post.creator._id && pathName === "/profile" && (
+        <div className="mt-5 flex-center gap-4 border-t border-gray-100">
+          <p
+            className="font-inter text-sm green_gradient cursor-pointer"
+            onClick={handleEdit}
+          >
+            edit
+          </p>
+          <p
+            className="font-inter text-sm orange_gradient cursor-pointer"
+            onClick={handleDelete}
+          >
+            delete
+          </p>
+        </div>
+      )}
     </div>
   );
 };
